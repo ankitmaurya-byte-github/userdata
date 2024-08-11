@@ -1,0 +1,44 @@
+.register {
+  background-color: rgba(61, 175, 213, 0.5);
+  height: 321px;
+  width: 43%;
+  margin: 97px auto;
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+  flex-direction: column;
+  gap: 100px;
+
+  .routetologin {
+    margin: 0 auto;
+
+    .alert {
+      text-align: center;
+      color: red;
+      font-weight: bold;
+    }
+  }
+  form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 13%;
+
+    input {
+      flex: 1;
+      width: 100%;
+      font-size: 18px;
+      outline: none;
+      padding: 10px;
+    }
+    button {
+      margin-top: 5px;
+      outline: none;
+      border: none;
+      padding: 5px 20px;
+      background-color: red;
+    }
+  }
+}
