@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import "./home.scss";
 import { ToastContainer, toast } from "react-toastify";
+import { HiOutlineLogout } from "react-icons/hi";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import ClipLoader from "react-spinners/ClipLoader";
 const Home = () => {
+  const navigate = useNavigate();
+  const [loading, setloading] = useState(false);
   const [formData, setFormData] = useState({
     department: "",
     dob: "",
@@ -18,7 +23,14 @@ const Home = () => {
       [name]: value,
     });
   };
+  const override = {
+    position: "absolute",
+    top: "20px",
 
+    left: "50%",
+    transform: "translateX(-50%)",
+    margin: "0 auto",
+  };
   const validateForm = () => {
     let tempErrors = {};
     let isValid = true;
@@ -46,10 +58,14 @@ const Home = () => {
     setErrors(tempErrors);
     return isValid;
   };
-
+  const logout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log(formData);
+    setloading(true);
     if (validateForm()) {
       try {
         await axios.post(
@@ -65,23 +81,35 @@ const Home = () => {
             },
           }
         );
+        setloading(false);
+        setFormData({
+          department: "",
+          dob: "",
+        });
+        toast("form submited");
+        navigate("/menu");
       } catch (err) {
+        setloading(false);
         toast(err.message);
       }
-
-      setFormData({
-        department: "",
-        dob: "",
-      });
-      toast("form submited");
     } else {
+      setloading(false);
       toast("Please fix the errors in the form.");
     }
   };
 
   return (
     <div className="form-container">
-      <ToastContainer />
+      <ClipLoader
+        // color={color}
+        loading={loading}
+        cssOverride={override}
+        size={50}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
+      <HiOutlineLogout onClick={logout} className="logout-icon" />
+
       <h1>Form Page</h1>
       <form onSubmit={handleSubmit}>
         <div>

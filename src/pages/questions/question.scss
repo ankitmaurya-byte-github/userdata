@@ -1,0 +1,105 @@
+.faq-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f0f2f5;
+  font-family: "Arial", sans-serif;
+}
+.MicSVG {
+  position: absolute;
+  top: 91px;
+  right: 27px;
+}
+.ans-atachments {
+  height: 100px;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  gap: 18px;
+  img {
+    height: 80px;
+    object-fit: cover;
+    object-position: center;
+    width: 80px;
+  }
+}
+.atachments {
+  height: 75%;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  gap: 18px;
+  margin-top: 20px;
+  img {
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+}
+
+.question-section,
+.answer-section {
+  max-width: 800px;
+  width: 100%;
+  padding: 20px;
+  margin: 10px;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  height: 200px;
+  position: relative;
+}
+.menu-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #0066ff; /* Blue buttons */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.menu-button:hover {
+  background-color: #0056e8; /* Darker blue on hover */
+}
+.question {
+  color: #333;
+  margin: 0;
+}
+.ans-atachments {
+}
+.answer-section .answer {
+  width: 100%; /* Full width of the container */
+  outline: none;
+  margin-bottom: 20px;
+
+  height: 100px; /* Fixed height */
+  font-size: 16px; /* Suitable font size for reading and writing */
+  color: #666;
+  line-height: 1.6;
+  border: 1px solid #ccc; /* Adds a light border around the textarea */
+  padding: 10px; /* Padding inside the textarea */
+  border-radius: 4px; /* Slight rounding of corners for aesthetics */
+  box-sizing: border-box; /* Ensures padding doesn't affect width/height */
+  resize: none; /* Disables resizing, remove if resizing is desired */
+  overflow: auto; /* Allows scrolling inside the textarea when content exceeds its height */
+}
+
+@media (max-width: 600px) {
+  .question-section,
+  .answer-section {
+    padding: 15px;
+  }
+
+  .question {
+    font-size: 18px;
+  }
+
+  .answer-section .answer {
+    font-size: 14px; /* Smaller font size for smaller screens */
+  }
+}
