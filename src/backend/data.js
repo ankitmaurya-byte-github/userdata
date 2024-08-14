@@ -13,8 +13,8 @@ app.use(fileUpload());
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 const jwt = require("jsonwebtoken");
-// app.use(express.json());
-// app.use(express.json({ limit: "50mb" }));
+app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 // app.use(express.urlencoded({ limit: "50mb" }));
@@ -26,6 +26,7 @@ cloudinary.config({
   api_secret: "5eA4-gxJt775R5_Xdta5j9oOtZo",
 });
 app.post("/sinup", async (req, res) => {
+  console.log(req.body);
   const data = new userModel1(req.body);
   const result = await data.save();
   result.toObject();
@@ -63,10 +64,10 @@ app.post("/submituser", verifytoken, async (req, res) => {
     console.log(req.body);
     const data = new userModel2(req.body);
     await data.save();
-    res.send(data);
+    res.send("data");
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(error.message);
   }
 });
 

@@ -64,6 +64,7 @@ const Home = () => {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const userid = JSON.parse(localStorage.getItem("users")).id;
     console.log(formData);
     setloading(true);
     if (validateForm()) {
@@ -73,7 +74,7 @@ const Home = () => {
           {
             department: formData.department,
             dob: formData.dob,
-            user: JSON.parse(localStorage.getItem("users")).id,
+            user: userid,
           },
           {
             headers: {
@@ -90,6 +91,7 @@ const Home = () => {
         navigate("/menu");
       } catch (err) {
         setloading(false);
+        console.log(err.response.data);
         toast(err.message);
       }
     } else {

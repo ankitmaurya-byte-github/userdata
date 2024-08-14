@@ -30,11 +30,12 @@ function Register() {
         password,
       });
       let data = await result.data;
+      console.log(data);
 
       setloading(false);
 
-      let id = data._id;
-      console.log(data);
+      let id = data.data._id;
+      console.log(id);
       localStorage.setItem(
         "users",
         JSON.stringify({ name, Email, password, id })
