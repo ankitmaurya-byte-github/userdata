@@ -1,21 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link, Navigate, json, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import ClipLoader from "react-spinners/ClipLoader";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import Spinner from "../../layouts/Spinner";
 function Login() {
   const [unfill, setUnfill] = useState(false);
   const navigate = useNavigate();
   const [loading, setloading] = useState(false);
-  const override = {
-    position: "absolute",
-    top: "20px",
 
-    left: "50%",
-    transform: "translateX(-50%)",
-    margin: "0 auto",
-  };
   const handelclick = async (event) => {
     event.preventDefault();
     setloading(true);
@@ -30,12 +23,12 @@ function Login() {
       let data = await result.data;
       console.log(data);
       if (data.auth) {
-        setloading(false);
-
         let id = data.data._id;
         data.data.id = id;
         localStorage.setItem("users", JSON.stringify(data.data));
         localStorage.setItem("auth", JSON.stringify(data.auth));
+        setloading(false);
+
         toast("Login succesfull");
         navigate("/");
       } else {
@@ -44,21 +37,18 @@ function Login() {
         toast(data.error);
       }
     } else {
+      setloading(false);
       console.log("write properly");
       toast("fill all details");
     }
   };
+  useEffect(() => {
+    document.title = "Login";
+  }, []);
   return (
     <>
       <div className="register">
-        <ClipLoader
-          // color={color}
-          loading={loading}
-          cssOverride={override}
-          size={50}
-          aria-label="Loading Spinner"
-          data-testid="loader"
-        />
+        {loading && <Spinner />}
         <form onSubmit={handelclick}>
           <input type="text" placeholder="Email" />
           <input type="text" placeholder="Password" />

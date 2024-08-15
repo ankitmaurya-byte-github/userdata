@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./menu.scss"; // Import the CSS for styling
 import { useNavigate } from "react-router-dom";
 
 const Menu = () => {
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = "Menu";
+  }, []);
   return (
     <div className="menu-container">
       <h1>Welcome to Our Tech Site</h1>

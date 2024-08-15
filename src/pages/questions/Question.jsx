@@ -6,6 +6,7 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../../layouts/Spinner";
 
 const Question = () => {
   const [quesNumber, setQuesNumber] = useState(0);
@@ -13,6 +14,7 @@ const Question = () => {
   const [answer, setAnswer] = useState("");
   const [images, setImages] = useState([]);
   const [showMic, setShowMic] = useState(true);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const {
     transcript,
@@ -45,6 +47,7 @@ const Question = () => {
     setQuestions(allquestions);
   }
   const handelAnswerSubmit = async () => {
+    setLoading(true);
     const formData = new FormData();
     formData.set("questionID", questions[quesNumber]._id);
     formData.set("answer", answer);
@@ -64,12 +67,14 @@ const Question = () => {
         }
       );
       const data = await response.data;
+      setLoading(false);
       console.log(data);
       toast.success("Answer submitted successfully");
       setQuesNumber((prev) => prev + 1);
       setAnswer("");
       setImages([]);
     } catch (error) {
+      setLoading(false);
       console.error(error);
       toast.error("Something went wrong");
     }
@@ -88,12 +93,7 @@ const Question = () => {
       reader.readAsDataURL(file);
     });
   };
-  const performTaskOnTranscriptChange = () => {
-    // setAnswer((prev) => prev + transcript);
-  };
-  useEffect(() => {
-    performTaskOnTranscriptChange();
-  }, [transcript]);
+
   useEffect(() => {
     if (quesNumber === 5) {
       toast.success("All questions answered");
@@ -101,11 +101,13 @@ const Question = () => {
     }
   }, [quesNumber]);
   useEffect(() => {
-    document.title = "Question";
+    document.title = `${quesNumber + 1}. Question`;
     fetchQuestions();
+    // fetchUserAudits();
   }, []);
   return (
     <div className="faq-container">
+      {loading && <Spinner />}
       <div className="buttons">
         <button
           onClick={() => {
@@ -176,8 +178,8 @@ const Question = () => {
 
         <div className="ans-atachments">
           {images.map((image, index) => (
-            <div style={{ position: "relative" }}>
-              <img key={index} src={image} alt="" />
+            <div key={index} style={{ position: "relative" }}>
+              <img src={image} alt="" />
               <DeleteSVG
                 onClick={() => {
                   const newImages = images.filter((i) => i !== image);

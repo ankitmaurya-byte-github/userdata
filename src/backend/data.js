@@ -34,11 +34,10 @@ app.post("/sinup", async (req, res) => {
     if (err) {
       res.send({ error: "error occured" });
     }
-    res.send({ data, auth: token });
+    res.send({ data: result, auth: token });
   });
 });
 app.post("/login", async (req, res) => {
-  console.log(req.body);
   console.log("body");
   const data = await userModel1.findOne({ Email: req.body.Email });
 

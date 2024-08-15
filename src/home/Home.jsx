@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./home.scss";
 import { ToastContainer, toast } from "react-toastify";
 import { HiOutlineLogout } from "react-icons/hi";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import ClipLoader from "react-spinners/ClipLoader";
+import Spinner from "../layouts/Spinner";
 const Home = () => {
   const navigate = useNavigate();
   const [loading, setloading] = useState(false);
@@ -22,14 +22,6 @@ const Home = () => {
       ...formData,
       [name]: value,
     });
-  };
-  const override = {
-    position: "absolute",
-    top: "20px",
-
-    left: "50%",
-    transform: "translateX(-50%)",
-    margin: "0 auto",
   };
   const validateForm = () => {
     let tempErrors = {};
@@ -64,7 +56,7 @@ const Home = () => {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const userid = JSON.parse(localStorage.getItem("users")).id;
+    const userid = JSON.parse(localStorage.getItem("users"))._id;
     console.log(formData);
     setloading(true);
     if (validateForm()) {
@@ -99,17 +91,13 @@ const Home = () => {
       toast("Please fix the errors in the form.");
     }
   };
-
+  useEffect(() => {
+    document.title = "User Form";
+  }, []);
   return (
     <div className="form-container">
-      <ClipLoader
-        // color={color}
-        loading={loading}
-        cssOverride={override}
-        size={50}
-        aria-label="Loading Spinner"
-        data-testid="loader"
-      />
+      {loading && <Spinner />}
+
       <HiOutlineLogout onClick={logout} className="logout-icon" />
 
       <h1>Form Page</h1>

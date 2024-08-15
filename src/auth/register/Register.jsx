@@ -4,19 +4,13 @@ import "../style.scss";
 import { Link, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { ClipLoader } from "react-spinners";
+import Spinner from "../../layouts/Spinner";
+
 function Register() {
   const navigate = useNavigate();
   const [loading, setloading] = useState(false);
   const [unfill, setUnfill] = useState(false);
-  const override = {
-    position: "absolute",
-    top: "20px",
 
-    left: "50%",
-    transform: "translateX(-50%)",
-    margin: "0 auto",
-  };
   const handelclick = async (event) => {
     event.preventDefault();
     setloading(true);
@@ -34,12 +28,7 @@ function Register() {
 
       setloading(false);
 
-      let id = data.data._id;
-      console.log(id);
-      localStorage.setItem(
-        "users",
-        JSON.stringify({ name, Email, password, id })
-      );
+      localStorage.setItem("users", JSON.stringify(data.data));
       toast("register succesfull");
 
       localStorage.setItem("auth", JSON.stringify(data.auth));
@@ -50,18 +39,13 @@ function Register() {
       toast("Please fill all details");
     }
   };
+  useEffect(() => {
+    document.title = "Register";
+  }, []);
   return (
     <>
+      {loading && <Spinner />}
       <div className="register">
-        <ClipLoader
-          // color={color}
-          loading={loading}
-          cssOverride={override}
-          size={50}
-          aria-label="Loading Spinner"
-          data-testid="loader"
-        />
-
         <form onSubmit={handelclick}>
           <input type="text" placeholder="Usename" />
           <input type="text" placeholder="Email" />
