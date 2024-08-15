@@ -72,6 +72,16 @@
   // height: 200px;
   position: relative;
 }
+.submit-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: green; /* Blue buttons */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 .menu-button {
   padding: 10px 20px;
   font-size: 16px;

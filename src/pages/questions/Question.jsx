@@ -88,6 +88,12 @@ const Question = () => {
       reader.readAsDataURL(file);
     });
   };
+  const performTaskOnTranscriptChange = () => {
+    // setAnswer((prev) => prev + transcript);
+  };
+  useEffect(() => {
+    performTaskOnTranscriptChange();
+  }, [transcript]);
   useEffect(() => {
     if (quesNumber === 5) {
       toast.success("All questions answered");
@@ -139,8 +145,8 @@ const Question = () => {
             onClick={() => {
               const test = answer + transcript;
               setAnswer(test);
-
               setShowMic(true);
+              resetTranscript();
               SpeechRecognition.stopListening();
             }}
           />
@@ -153,7 +159,7 @@ const Question = () => {
           />
         </div>
         <textarea
-          value={!showMic ? transcript : answer}
+          value={answer + transcript}
           onChange={(e) => setAnswer(e.target.value)}
           className="answer"
           placeholder="Type your answer here..."
@@ -185,14 +191,12 @@ const Question = () => {
           <label htmlFor="file-upload">
             <AddImage />
           </label>
-          {quesNumber === 4 && (
-            <div>
-              <button onClick={handelAnswerSubmit} className="menu-button">
-                submit
-              </button>
-            </div>
-          )}
         </div>
+      </div>
+      <div>
+        <button onClick={handelAnswerSubmit} className="submit-button">
+          submit
+        </button>
       </div>
     </div>
   );
