@@ -12,6 +12,7 @@
   position: absolute;
   top: 91px;
   right: 27px;
+
   .show {
     display: block;
   }
@@ -19,10 +20,23 @@
     display: none;
   }
 }
+.buttons {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
 .ans-atachments {
   height: 100px;
   width: 100%;
-  overflow: hidden;
+  .deletesvg {
+    position: absolute;
+    top: -14px;
+    right: -11px;
+    &:hover {
+      color: red;
+      fill: red;
+    }
+  }
   display: flex;
   gap: 18px;
   img {

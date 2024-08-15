@@ -100,6 +100,24 @@ const Question = () => {
   }, []);
   return (
     <div className="faq-container">
+      <div className="buttons">
+        <button
+          onClick={() => {
+            setQuesNumber((prev) => (prev - 1 + 5) % 5);
+          }}
+          className="menu-button"
+        >
+          &lt; previous
+        </button>
+        <button
+          onClick={() => {
+            setQuesNumber((prev) => (prev + 1) % 5);
+          }}
+          className="menu-button"
+        >
+          Next &gt;
+        </button>
+      </div>
       <div className="question-section">
         <h2 className="question">
           {quesNumber + 1}
@@ -121,8 +139,7 @@ const Question = () => {
             onClick={() => {
               const test = answer + transcript;
               setAnswer(test);
-              console.log(answer);
-              console.log(transcript);
+
               setShowMic(true);
               SpeechRecognition.stopListening();
             }}
@@ -136,7 +153,7 @@ const Question = () => {
           />
         </div>
         <textarea
-          value={answer + transcript}
+          value={!showMic ? transcript : answer}
           onChange={(e) => setAnswer(e.target.value)}
           className="answer"
           placeholder="Type your answer here..."
@@ -153,17 +170,28 @@ const Question = () => {
 
         <div className="ans-atachments">
           {images.map((image, index) => (
-            <img key={index} src={image} alt="" />
+            <div style={{ position: "relative" }}>
+              <img key={index} src={image} alt="" />
+              <DeleteSVG
+                onClick={() => {
+                  const newImages = images.filter((i) => i !== image);
+                  setImages(newImages);
+                }}
+                className="deletesvg"
+              />
+            </div>
           ))}
 
           <label htmlFor="file-upload">
             <AddImage />
           </label>
-          <div>
-            <button onClick={handelAnswerSubmit} className="menu-button">
-              Next
-            </button>
-          </div>
+          {quesNumber === 4 && (
+            <div>
+              <button onClick={handelAnswerSubmit} className="menu-button">
+                submit
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -219,7 +247,10 @@ const MicSVG = (props) => {
       viewBox="0 0 512 512"
       {...props}
     >
-      <path d="M155.7 320.3c2.8 23.3 24.9 42.4 49 42.4h87.8c24.1 0 46.2-19.1 49-42.4l11.7-96.6c2.8-23.3 2.8-61.4 0-84.8l-11.7-96.6C338.6 19 316.5 0 292.4 0h-87.8c-24.1 0-46.2 19.1-49 42.4L144 138.9c-2.8 23.3-2.8 61.5 0 84.8l11.7 96.6zm263.4-149.6h-42.6c.4 19.5-.3 40.2-2.2 55.6l-11.7 96.6c-4.1 34.3-34.9 61.1-70.2 61.1h-87.8c-35.2 0-66-26.9-70.2-61.1l-11.7-96.6c-1.9-15.4-2.6-36.1-2.2-55.6H77.9c-.4 21.3.4 43.6 2.5 60.7L92.1 328c6.7 55.3 56.1 98.6 112.5 98.6h22.6v42.7h-64V512h170.7v-42.7h-64v-42.7h22.6c56.5 0 105.9-43.4 112.5-98.7l11.7-96.7c2-17 2.8-39.3 2.4-60.5z" />
+      <path
+        fill="green"
+        d="M155.7 320.3c2.8 23.3 24.9 42.4 49 42.4h87.8c24.1 0 46.2-19.1 49-42.4l11.7-96.6c2.8-23.3 2.8-61.4 0-84.8l-11.7-96.6C338.6 19 316.5 0 292.4 0h-87.8c-24.1 0-46.2 19.1-49 42.4L144 138.9c-2.8 23.3-2.8 61.5 0 84.8l11.7 96.6zm263.4-149.6h-42.6c.4 19.5-.3 40.2-2.2 55.6l-11.7 96.6c-4.1 34.3-34.9 61.1-70.2 61.1h-87.8c-35.2 0-66-26.9-70.2-61.1l-11.7-96.6c-1.9-15.4-2.6-36.1-2.2-55.6H77.9c-.4 21.3.4 43.6 2.5 60.7L92.1 328c6.7 55.3 56.1 98.6 112.5 98.6h22.6v42.7h-64V512h170.7v-42.7h-64v-42.7h22.6c56.5 0 105.9-43.4 112.5-98.7l11.7-96.7c2-17 2.8-39.3 2.4-60.5z"
+      />
     </svg>
   );
 };
@@ -233,12 +264,27 @@ const StopSVG = (props) => (
     {...props}
   >
     <path
-      fill="#1C274C"
+      fill="rgb(255, 0, 0)"
       fillRule="evenodd"
       d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10ZM8.586 8.586C8 9.172 8 10.114 8 12c0 1.886 0 2.828.586 3.414C9.172 16 10.114 16 12 16c1.886 0 2.828 0 3.414-.586C16 14.828 16 13.886 16 12c0-1.886 0-2.828-.586-3.414C14.828 8 13.886 8 12 8c-1.886 0-2.828 0-3.414.586Z"
       clipRule="evenodd"
     />
   </svg>
 );
-
+const DeleteSVG = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 -5 32 32"
+    width={30}
+    height={30}
+    {...props}
+  >
+    <title>{"delete"}</title>
+    <path
+      fill="#000"
+      fillRule="evenodd"
+      d="M22.647 13.24a1.002 1.002 0 1 1-1.415 1.42l-2.239-2.24-2.268 2.27c-.394.39-1.033.39-1.427 0a1.013 1.013 0 0 1 0-1.43l2.268-2.27-2.239-2.23a1.002 1.002 0 1 1 1.415-1.42l2.239 2.24 2.3-2.3a1.016 1.016 0 0 1 1.427 0c.395.4.395 1.03 0 1.43l-2.3 2.3 2.239 2.23ZM27.996 0H10.051c-.28-.02-.566.07-.78.28L.285 10.22a.989.989 0 0 0-.287.76c-.015.28.076.56.287.77l8.986 9.94c.196.19.452.29.708.29V22h18.017A4.002 4.002 0 0 0 32 18V4c0-2.21-1.793-4-4.004-4Z"
+    />
+  </svg>
+);
 export default Question;
