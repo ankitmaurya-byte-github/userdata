@@ -2,11 +2,30 @@ import React, { useEffect, useState } from "react";
 import "./question.scss";
 import axios from "axios";
 import { toast } from "react-toastify";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
+import { useNavigate } from "react-router-dom";
+
 const Question = () => {
   const [quesNumber, setQuesNumber] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [answer, setAnswer] = useState("");
   const [images, setImages] = useState([]);
+  const [showMic, setShowMic] = useState(true);
+  const navigate = useNavigate();
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
+
+  if (!browserSupportsSpeechRecognition) {
+    return <span>Browser doesn't support speech recognition.</span>;
+  }
+  const startListening = () =>
+    SpeechRecognition.startListening({ continuous: true });
   const getQuestion = async () => {
     try {
       const response = await axios("http://localhost:5000/questions", {
@@ -27,6 +46,7 @@ const Question = () => {
   }
   const handelAnswerSubmit = async () => {
     const formData = new FormData();
+    formData.set("questionID", questions[quesNumber]._id);
     formData.set("answer", answer);
     formData.set("question", questions[quesNumber].question);
     images.forEach((image) => {
@@ -69,27 +89,54 @@ const Question = () => {
     });
   };
   useEffect(() => {
+    if (quesNumber === 5) {
+      toast.success("All questions answered");
+      navigate("/");
+    }
+  }, [quesNumber]);
+  useEffect(() => {
     document.title = "Question";
     fetchQuestions();
   }, []);
   return (
     <div className="faq-container">
       <div className="question-section">
-        <h2 className="question">{questions[quesNumber]?.question}</h2>
+        <h2 className="question">
+          {quesNumber + 1}
+          {".   "}
+          {questions[quesNumber]?.question}
+        </h2>
         {questions[quesNumber]?.attachment.length > 0 && (
           <div className="atachments">
-            {questions[quesNumber]?.attachment?.map((attachment) => (
-              <img src={attachment} alt="" />
+            {questions[quesNumber]?.attachment?.map((attachment, index) => (
+              <img key={index} src={attachment} alt="" />
             ))}
           </div>
         )}
       </div>
       <div className="answer-section">
-        <div className="MicSVG">
-          <MicSVG />
+        <div className="micelement">
+          <StopSVG
+            className={`svg ${!showMic ? "show" : "hide"}`}
+            onClick={() => {
+              const test = answer + transcript;
+              setAnswer(test);
+              console.log(answer);
+              console.log(transcript);
+              setShowMic(true);
+              SpeechRecognition.stopListening();
+            }}
+          />
+          <MicSVG
+            className={`svg ${showMic ? "show" : "hide"}`}
+            onClick={() => {
+              setShowMic(false);
+              startListening();
+            }}
+          />
         </div>
         <textarea
-          value={answer}
+          value={answer + transcript}
           onChange={(e) => setAnswer(e.target.value)}
           className="answer"
           placeholder="Type your answer here..."
@@ -105,8 +152,8 @@ const Question = () => {
         />
 
         <div className="ans-atachments">
-          {images.map((image) => (
-            <img src={image} alt="" />
+          {images.map((image, index) => (
+            <img key={index} src={image} alt="" />
           ))}
 
           <label htmlFor="file-upload">
@@ -176,5 +223,22 @@ const MicSVG = (props) => {
     </svg>
   );
 };
+const StopSVG = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    width={30}
+    height={30}
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path
+      fill="#1C274C"
+      fillRule="evenodd"
+      d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10ZM8.586 8.586C8 9.172 8 10.114 8 12c0 1.886 0 2.828.586 3.414C9.172 16 10.114 16 12 16c1.886 0 2.828 0 3.414-.586C16 14.828 16 13.886 16 12c0-1.886 0-2.828-.586-3.414C14.828 8 13.886 8 12 8c-1.886 0-2.828 0-3.414.586Z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
 
 export default Question;

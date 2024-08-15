@@ -8,10 +8,16 @@
   background-color: #f0f2f5;
   font-family: "Arial", sans-serif;
 }
-.MicSVG {
+.micelement {
   position: absolute;
   top: 91px;
   right: 27px;
+  .show {
+    display: block;
+  }
+  .hide {
+    display: none;
+  }
 }
 .ans-atachments {
   height: 100px;
@@ -27,7 +33,7 @@
   }
 }
 .atachments {
-  height: 75%;
+  height: 150px;
   width: 100%;
   overflow: hidden;
   display: flex;
@@ -49,7 +55,7 @@
   background: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  height: 200px;
+  // height: 200px;
   position: relative;
 }
 .menu-button {

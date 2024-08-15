@@ -26,20 +26,28 @@ const userSchema3 = mongoose.Schema({
   audit: [
     {
       question: {
-        type: String,
-        required: true,
+        text: { type: String, required: true },
+
+        questionID: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: "questions",
+        },
       },
       answer: {
         type: String,
         required: true,
       },
-      attachment: {
-        type: String,
-      },
+      attachment: [
+        {
+          type: String,
+        },
+      ],
     },
   ],
   user: {
     type: mongoose.Schema.Types.ObjectId,
+    required: true,
     ref: "users",
   },
 });

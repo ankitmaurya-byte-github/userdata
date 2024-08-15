@@ -72,7 +72,9 @@ app.post("/submituser", verifytoken, async (req, res) => {
 });
 
 app.post("/submitanswer", verifytoken, async (req, res) => {
-  // let images = [];
+  if (!req.body.images) {
+    req.body.images = [];
+  }
   req.body.images = Array.isArray(req.body.images)
     ? req.body.images
     : [req.body.images];
@@ -93,12 +95,43 @@ app.post("/submitanswer", verifytoken, async (req, res) => {
     });
     const uploadResults = await Promise.all(images);
     console.log(req.user);
-
-    // check if user exist in data bases
-    // if exist then update it
-    // else create new user
-
-    res.send(uploadResults);
+    const userdata = await userModel3.findOne({ user: req.user });
+    if (userdata) {
+      // update here
+      console.log(userdata);
+      const result = await userModel3.updateOne({
+        $push: {
+          audit: {
+            question: {
+              text: req.body.question,
+              questionID: req.body.questionID,
+            },
+            answer: req.body.answer,
+            attachment: uploadResults,
+          },
+        },
+      });
+      if (result.nModified === 0) {
+        throw new Error("No document was updated");
+      }
+      res.send({ message: "Audit updated successfully", result });
+    } else {
+      const addAudit = new userModel3({
+        audit: [
+          {
+            question: {
+              text: req.body.question,
+              questionID: req.body.questionID,
+            },
+            answer: req.body.answer,
+            attachment: uploadResults,
+          },
+        ],
+        user: req.user,
+      });
+      await addAudit.save();
+      res.send({ message: "New audit added successfully" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).send(error);
