@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./question.scss";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -9,12 +9,14 @@ import { useNavigate } from "react-router-dom";
 import Spinner from "../../layouts/Spinner";
 
 const Question = () => {
+  const [store, setStore] = useState([]);
   const [quesNumber, setQuesNumber] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [answer, setAnswer] = useState("");
   const [images, setImages] = useState([]);
   const [showMic, setShowMic] = useState(true);
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const {
     transcript,
@@ -27,7 +29,7 @@ const Question = () => {
     return <span>Browser doesn't support speech recognition.</span>;
   }
   const startListening = () =>
-    SpeechRecognition.startListening({ continuous: true });
+    SpeechRecognition.startListening({ continuous: true, language: "en-IN" });
   const getQuestion = async () => {
     try {
       const response = await axios("http://localhost:5000/questions", {
@@ -70,6 +72,10 @@ const Question = () => {
       setLoading(false);
       console.log(data);
       toast.success("Answer submitted successfully");
+      if (quesNumber === 4) {
+        toast.success("All questions answered");
+        navigate("/");
+      }
       setQuesNumber((prev) => prev + 1);
       setAnswer("");
       setImages([]);
@@ -93,17 +99,39 @@ const Question = () => {
       reader.readAsDataURL(file);
     });
   };
-
+  const storedData = (n) => {
+    let temp = [...store];
+    temp[n] = { answer: answer, images: images };
+    setStore(temp);
+  };
   useEffect(() => {
-    if (quesNumber === 5) {
-      toast.success("All questions answered");
-      navigate("/");
+    if (store[quesNumber]) {
+      setAnswer(store[quesNumber].answer);
+      setImages(store[quesNumber].images);
+    } else {
+      setAnswer("");
+      setImages([]);
     }
   }, [quesNumber]);
+
   useEffect(() => {
+    // const handleBeforeUnload = (event) => {
+    event.preventDefault();
+    console.log(store);
+    localStorage.setItem("store", JSON.stringify(store));
+    // };
     document.title = `${quesNumber + 1}. Question`;
     fetchQuestions();
     // fetchUserAudits();
+    // window.addEventListener("beforeunload", handleBeforeUnload);
+    const result = localStorage.getItem("store");
+    if (result) {
+      setStore(JSON.parse(result));
+    }
+    return () => {
+      // window.removeEventListener("beforeunload", handleBeforeUnload);
+      console.log(store);
+    };
   }, []);
   return (
     <div className="faq-container">
@@ -111,6 +139,7 @@ const Question = () => {
       <div className="buttons">
         <button
           onClick={() => {
+            storedData(quesNumber);
             setQuesNumber((prev) => (prev - 1 + 5) % 5);
           }}
           className="menu-button"
@@ -119,6 +148,7 @@ const Question = () => {
         </button>
         <button
           onClick={() => {
+            storedData(quesNumber);
             setQuesNumber((prev) => (prev + 1) % 5);
           }}
           className="menu-button"
@@ -144,24 +174,25 @@ const Question = () => {
         <div className="micelement">
           <StopSVG
             className={`svg ${!showMic ? "show" : "hide"}`}
-            onClick={() => {
-              const test = answer + transcript;
-              setAnswer(test);
-              setShowMic(true);
-              resetTranscript();
+            onClick={async () => {
+              setAnswer(answer + transcript);
+
               SpeechRecognition.stopListening();
+              setShowMic(true);
+              console.log("test");
             }}
           />
           <MicSVG
             className={`svg ${showMic ? "show" : "hide"}`}
             onClick={() => {
+              resetTranscript();
               setShowMic(false);
               startListening();
             }}
           />
         </div>
         <textarea
-          value={answer + transcript}
+          value={answer + (!showMic ? transcript : "")}
           onChange={(e) => setAnswer(e.target.value)}
           className="answer"
           placeholder="Type your answer here..."
