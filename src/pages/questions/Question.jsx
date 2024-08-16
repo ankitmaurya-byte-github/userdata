@@ -16,6 +16,7 @@ const Question = () => {
   const [images, setImages] = useState([]);
   const [showMic, setShowMic] = useState(true);
   const [loading, setLoading] = useState(false);
+  const storeRef = useRef(store);
 
   const navigate = useNavigate();
   const {
@@ -105,6 +106,8 @@ const Question = () => {
     setStore(temp);
   };
   useEffect(() => {
+    document.title = `${quesNumber + 1}. Question`;
+    console.log(store);
     if (store[quesNumber]) {
       setAnswer(store[quesNumber].answer);
       setImages(store[quesNumber].images);
@@ -113,25 +116,32 @@ const Question = () => {
       setImages([]);
     }
   }, [quesNumber]);
-
   useEffect(() => {
-    // const handleBeforeUnload = (event) => {
-    event.preventDefault();
     console.log(store);
-    localStorage.setItem("store", JSON.stringify(store));
-    // };
-    document.title = `${quesNumber + 1}. Question`;
-    fetchQuestions();
-    // fetchUserAudits();
-    // window.addEventListener("beforeunload", handleBeforeUnload);
-    const result = localStorage.getItem("store");
-    if (result) {
-      setStore(JSON.parse(result));
-    }
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      console.log(answer);
+      localStorage.setItem("store", JSON.stringify(store));
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
-      // window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
       console.log(store);
     };
+  }, [store]);
+
+  useEffect(() => {
+    fetchQuestions();
+    // fetchUserAudits();
+
+    const result = JSON.parse(localStorage.getItem("store"));
+
+    if (result) {
+      console.log(result);
+      setStore(result);
+      setAnswer(result[0].answer);
+      setImages(result[0].images);
+    }
   }, []);
   return (
     <div className="faq-container">
