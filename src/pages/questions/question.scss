@@ -50,10 +50,16 @@
 .atachments {
   height: 150px;
   width: 100%;
-  overflow: hidden;
+  overflow: scroll;
   display: flex;
   gap: 18px;
   margin-top: 20px;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
   img {
     height: 100%;
     object-fit: cover;

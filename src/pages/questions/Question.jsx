@@ -72,11 +72,11 @@ const Question = () => {
       const data = await response.data;
       setLoading(false);
       console.log(data);
-      toast.success("Answer submitted successfully");
       if (quesNumber === 4) {
         toast.success("All questions answered");
         navigate("/");
       }
+      toast.success("Answer submitted successfully");
       setQuesNumber((prev) => prev + 1);
       setAnswer("");
       setImages([]);
@@ -185,9 +185,10 @@ const Question = () => {
           <StopSVG
             className={`svg ${!showMic ? "show" : "hide"}`}
             onClick={async () => {
-              setAnswer(answer + transcript);
-
-              SpeechRecognition.stopListening();
+              await SpeechRecognition.stopListening();
+              let script = transcript;
+              resetTranscript();
+              setAnswer(answer + script);
               setShowMic(true);
               console.log("test");
             }}
@@ -195,14 +196,13 @@ const Question = () => {
           <MicSVG
             className={`svg ${showMic ? "show" : "hide"}`}
             onClick={() => {
-              resetTranscript();
               setShowMic(false);
               startListening();
             }}
           />
         </div>
         <textarea
-          value={answer + (!showMic ? transcript : "")}
+          value={answer + transcript}
           onChange={(e) => setAnswer(e.target.value)}
           className="answer"
           placeholder="Type your answer here..."
