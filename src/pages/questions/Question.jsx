@@ -26,9 +26,6 @@ const Question = () => {
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
 
-  if (!browserSupportsSpeechRecognition) {
-    return <span>Browser doesn't support speech recognition.</span>;
-  }
   const startListening = () =>
     SpeechRecognition.startListening({ continuous: true, language: "en-IN" });
   const getQuestion = async () => {
@@ -115,7 +112,7 @@ const Question = () => {
       setAnswer("");
       setImages([]);
     }
-  }, [quesNumber]);
+  }, [quesNumber, store]);
   useEffect(() => {
     console.log(store);
     const handleBeforeUnload = (event) => {
@@ -128,7 +125,7 @@ const Question = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
       console.log(store);
     };
-  }, [store]);
+  }, [store, answer]);
 
   useEffect(() => {
     fetchQuestions();
@@ -143,6 +140,11 @@ const Question = () => {
       setImages(result[0].images);
     }
   }, []);
+
+  if (!browserSupportsSpeechRecognition) {
+    return <span>Browser doesn't support speech recognition.</span>;
+  }
+
   return (
     <div className="faq-container">
       {loading && <Spinner />}
@@ -154,7 +156,7 @@ const Question = () => {
           }}
           className="menu-button"
         >
-          &lt; previous
+          previous
         </button>
         <button
           onClick={() => {
@@ -163,7 +165,7 @@ const Question = () => {
           }}
           className="menu-button"
         >
-          Next &gt;
+          Next
         </button>
       </div>
       <div className="question-section">
@@ -244,7 +246,6 @@ const Question = () => {
     </div>
   );
 };
-
 const AddImage = (props) => {
   return (
     <div>
